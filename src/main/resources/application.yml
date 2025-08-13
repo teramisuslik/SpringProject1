@@ -1,0 +1,19 @@
+spring:
+  application:
+  name: server1
+  datasource:
+    url: jdbc:postgresql://localhost:5432/TaskTracker
+    username: postgres
+    password: 210009
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  jwt:
+    secret: 0445b6b15da00f3d3836b6dbe1cd95cdb5e81066f83ffdceed3fbd9ad26d9bc2
+    lifetime: 1440
+server:
+  port: 8080
