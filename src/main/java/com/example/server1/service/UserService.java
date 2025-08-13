@@ -25,8 +25,6 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final TaskService taskService;
     private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
 
@@ -57,7 +55,7 @@ public class UserService {
     }
 
     public User addTasks(String username, List<Task> taskList) {
-        User user = userRepository.findByUsername(username).orElse(null);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundExeption("пользователь не найден"));
 
         if (taskList != null) {
             for (Task task : taskList) {
