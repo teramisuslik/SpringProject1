@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,10 +60,11 @@ public class Controller {
 
 
     @PostMapping("/{username}/addtask")
+    @PreAuthorize("hasRole('ADMIN')")
     public User createUser(
             @PathVariable String username,
             @RequestBody List<Task> taskList) {
-        log.info("createUser");
+        log.info("addTask");
         return userService.addTasks(username, taskList);
     }
 
@@ -75,13 +77,15 @@ public class Controller {
     @GetMapping("/userwithouttasks")
     public Map<String,Object> getUserWithoutTasks(@RequestParam String username) {
         log.info("getUser");
-        return Map.of(
-                "username", userService.getUsername(username),
-                "role", userService.getRole(username)
-        );
+        User user = userService.getUserByUsername(username);
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("username", user.getUsername());
+        map.put("role", user.getRole());
+        return map;
     }
 
     @PutMapping("/markthetaskascompleted")
+    @PreAuthorize("hasRole('ADMIN')")
     public Task markTaskAsCompleted(@RequestParam String title) {
         return taskService.markTaskAsCompleted(title);
     }

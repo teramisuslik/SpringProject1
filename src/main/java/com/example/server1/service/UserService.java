@@ -9,6 +9,8 @@ import com.example.server1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -101,6 +103,13 @@ public class UserService {
 
     @Transactional
     public void deleteUserByUsername(String username){
+        User user = userRepository.getUserByUsername(username);
+        taskRepository.deleteByUserId(user.getId());
         userRepository.deleteByUsername(username);
+    }
+
+    @Transactional
+    public User getUserByUsername(@Param("username") String username){
+        return userRepository.getUserByUsername(username);
     }
 }

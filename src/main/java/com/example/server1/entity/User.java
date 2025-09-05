@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@Component
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +37,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "assignee")
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "assignee",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
     private List<Task> tasks;
 
     @Override
