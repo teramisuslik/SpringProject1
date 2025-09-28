@@ -1,5 +1,6 @@
 package com.example.server1.service;
 
+import com.example.server1.entity.Status;
 import com.example.server1.entity.Task;
 import com.example.server1.exeptions.NotFoundExeption;
 import com.example.server1.repository.TaskRepository;
@@ -25,7 +26,7 @@ public class TaskService {
 
     public Task markTaskAsCompleted(String title) {
         Task task = taskRepository.findTaskByTitle(title).orElseThrow(() -> new NotFoundExeption("задача не найдена"));
-        task.setStatus(Boolean.TRUE);
+        task.setStatus(Status.ЗАВЕРШЕНА);
         return taskRepository.save(task);
     }
 }

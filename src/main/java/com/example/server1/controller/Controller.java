@@ -11,6 +11,7 @@ import com.example.server1.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class Controller {
         return "redirect:/login";
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         log.info("login...");
         User user = userService.login(request.getUsername(), request.getPassword());
@@ -58,20 +59,15 @@ public class Controller {
         return "main";
     }
 
-
-    @PostMapping("/{username}/addtask")
-    @PreAuthorize("hasRole('ADMIN')")
-    public User createUser(
-            @PathVariable String username,
-            @RequestBody List<Task> taskList) {
-        log.info("addTask");
-        return userService.addTasks(username, taskList);
-    }
-
     @GetMapping("/user")
     public User getUser(@RequestParam String username) {
         log.info("getUser");
         return userService.findByUsername(username);
+    }
+
+    @GetMapping("/allusers")
+    public List<User> getUsers() {
+        return userService.findAll();
     }
 
     @GetMapping("/userwithouttasks")
@@ -97,6 +93,14 @@ public class Controller {
         userService.deleteUserByUsername(username);
         log.info("User deleted");
         return ResponseEntity.ok("User deleted");
+    }
+
+    @GetMapping("/allusersname")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<String> getAllUsers() {
+        List<String> list =  userService.findAllUsername();
+        log.info(list.toString());
+        return list;
     }
 
 

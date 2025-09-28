@@ -39,9 +39,7 @@ public class User implements UserDetails {
 
     @OneToMany(
             cascade = CascadeType.ALL,
-            mappedBy = "assignee",
-            fetch = FetchType.LAZY,
-            orphanRemoval = true
+            mappedBy = "assignee"
     )
     private List<Task> tasks;
 

@@ -26,8 +26,13 @@ public class Task {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean status;
+    private Status status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Importance importance;
 
     private LocalDateTime deadline;
 

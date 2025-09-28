@@ -1,6 +1,7 @@
 package com.example.server1.service;
 
 import com.example.server1.entity.Role;
+import com.example.server1.entity.Status;
 import com.example.server1.entity.Task;
 import com.example.server1.entity.User;
 import com.example.server1.exeptions.NotFoundExeption;
@@ -56,17 +57,16 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("при попытке входа что-то пошло не так"));
     }
 
-    public User addTasks(String username, List<Task> taskList) {
+    public User addTasks(String username, Task task) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundExeption("пользователь не найден"));
 
-        if (taskList != null) {
-            for (Task task : taskList) {
-                task.setAssignee(user);
-                taskRepository.save(task);
-                List<Task> tasks = user.getTasks() != null ? user.getTasks() : new ArrayList<>();
-                tasks.add(task);
-                user.setTasks(tasks);
-            }
+        if (task != null) {
+            task.setStatus(Status.НЕ_НАЧАТА);
+            task.setAssignee(user);
+            taskRepository.save(task);
+            List<Task> tasks = user.getTasks() != null ? user.getTasks() : new ArrayList<>();
+            tasks.add(task);
+            user.setTasks(tasks);
         }
         else{
             throw new NotFoundExeption("пустой список задач");
@@ -81,6 +81,10 @@ public class UserService {
         return user.orElseThrow(
                 () -> new NotFoundExeption("такого пользователя нет")
         );
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAllByRole(Role.USER);
     }
 
     public String getUsername(String username) {
@@ -111,5 +115,10 @@ public class UserService {
     @Transactional
     public User getUserByUsername(@Param("username") String username){
         return userRepository.getUserByUsername(username);
+    }
+
+    @Transactional
+    public List<String> findAllUsername(){
+        return userRepository.findAllByRole(Role.USER).stream().map(user -> user.getUsername()).toList();
     }
 }
