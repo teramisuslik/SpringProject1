@@ -1,5 +1,6 @@
 package com.example.server1.controller;
 
+import com.example.server1.entity.Comment;
 import com.example.server1.entity.Role;
 import com.example.server1.entity.Task;
 import com.example.server1.entity.User;
@@ -80,11 +81,26 @@ public class Controller {
         return map;
     }
 
+    //чтобы отметить задачу как выполненную
     @PutMapping("/markthetaskascompleted")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Task markTaskAsCompleted(@RequestParam String title) {
+    public String markTaskAsCompleted(@RequestParam String title) {
         return taskService.markTaskAsCompleted(title);
     }
+
+    //чтобы отметить задачу, что она в работе
+    @PutMapping("/markthetaskasinwork")
+    public String markTaskAsInWork(@RequestParam String title) {
+        return taskService.markTaskAsInWork(title);
+    }
+
+    //чтобы отправить задачу на доработку и добывать комментарий
+    @PutMapping("/markthetaskasonrework")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String markTaskAsOnRework(@RequestParam String title,
+                                   @RequestBody Comment comment) {
+        return taskService.markTaskAsOnRework(title, comment);
+    }
+
 
     @DeleteMapping("/deleteuser/{username}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -102,6 +118,4 @@ public class Controller {
         log.info(list.toString());
         return list;
     }
-
-
 }

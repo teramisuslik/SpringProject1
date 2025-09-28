@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -39,5 +40,11 @@ public class Task {
     @JoinColumn(name = "user_id")
     @ManyToOne
     private User assignee;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "task"
+    )
+    private List<Comment> comments;
 
 }
