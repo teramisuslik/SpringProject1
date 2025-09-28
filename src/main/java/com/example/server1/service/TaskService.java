@@ -27,7 +27,7 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public String markTaskAsCompleted(String title) {
+    public String markTaskAsInWork(String title) {
         Task task = taskRepository.findTaskByTitle(title).orElseThrow(() -> new NotFoundExeption("задача не найдена"));
         if (task.getStatus() == Status.НЕ_НАЧАТА) {
             task.setStatus(Status.В_РАБОТЕ);
@@ -37,10 +37,11 @@ public class TaskService {
         return "Так нельзя";
     }
 
-    public String markTaskAsInWork(String title) {
+    public String markTaskAsCompleted(String title) {
         Task task = taskRepository.findTaskByTitle(title).orElseThrow(() -> new NotFoundExeption("задача не найдена"));
-        if (task.getStatus() == Status.В_РАБОТЕ) {
+        if (task.getStatus() == Status.В_РАБОТЕ || task.getStatus() == Status.НА_ДОРАБОТКЕ) {
             task.setStatus(Status.ЗАВЕРШЕНА);
+            taskRepository.save(task);
             return "Статус изменен";
         }
         return "Так нельзя";
