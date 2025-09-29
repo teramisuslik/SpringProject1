@@ -1,10 +1,7 @@
 package com.example.server1.controller;
 
 
-import com.example.server1.entity.Importance;
-import com.example.server1.entity.Status;
-import com.example.server1.entity.TaskDto;
-import com.example.server1.entity.Task;
+import com.example.server1.entity.*;
 import com.example.server1.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ public class TaskConsumer {
     private final UserService userService;
     private final ObjectMapper objectMapper;
 
+    // Существующий consumer для создания задач
     @KafkaListener(topics = "task-assignments")
     @Transactional
     public void consumeTask(String taskJson) {
@@ -47,6 +45,28 @@ public class TaskConsumer {
         }
     }
 
+    @KafkaListener(topics = "task-deletions")
+    @Transactional
+    public void consumeTaskDeletion(String deletionJson) {
+        try {
+            log.info("Получено сообщение об удалении из Kafka: {}", deletionJson);
+
+            // Парсим в DTO удаления
+            TaskDeleteDto deleteDto = objectMapper.readValue(deletionJson, TaskDeleteDto.class);
+
+            // Исправляем порядок параметров: username, title
+            userService.deleteTask(deleteDto.getUsername(), deleteDto.getId());
+
+            log.info("Задача удалена для пользователя: {}, название: {}",
+                    deleteDto.getUsername(), deleteDto.getId());
+
+        } catch (Exception e) {
+            log.error("Ошибка обработки удаления задачи из Kafka: {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Остальные методы остаются без изменений
     private Task convertToEntity(TaskDto dto) {
         Task task = new Task();
         task.setTitle(dto.getTitle());
@@ -76,7 +96,7 @@ public class TaskConsumer {
 
     private Importance convertToImportance(String importanceStr) {
         if (importanceStr == null) {
-            return Importance.МОЖЕТ_ПОДОЖДАТЬ; // значение по умолчанию
+            return Importance.МОЖЕТ_ПОДОЖДАТЬ;
         }
 
         try {
@@ -89,7 +109,7 @@ public class TaskConsumer {
 
     private Status convertToStatus(String statusStr) {
         if (statusStr == null) {
-            return Status.НЕ_НАЧАТА; // значение по умолчанию
+            return Status.НЕ_НАЧАТА;
         }
 
         try {

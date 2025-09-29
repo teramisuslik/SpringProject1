@@ -14,4 +14,8 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
     @Modifying
     @Query(value = "DELETE FROM tasks WHERE user_id = :user_id", nativeQuery = true)
     int deleteByUserId(@Param("user_id") Long user_id);
+
+    Optional<Task> findByTitle (String title);
+
+    void deleteTaskById(Long id);
 }

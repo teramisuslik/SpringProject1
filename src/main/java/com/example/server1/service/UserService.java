@@ -8,6 +8,7 @@ import com.example.server1.exeptions.NotFoundExeption;
 import com.example.server1.repository.TaskRepository;
 import com.example.server1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.jpa.repository.Query;
@@ -21,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -110,6 +113,19 @@ public class UserService {
         User user = userRepository.getUserByUsername(username);
         taskRepository.deleteByUserId(user.getId());
         userRepository.deleteByUsername(username);
+    }
+
+    @Transactional
+    public void deleteTask(String username, Long id){
+        log.info("Delete task");
+        log.info("username : " + username);
+        User user = userRepository.getUserByUsername(username);
+        log.info("username : " + user.getUsername());
+        List<Task> new_tasks = user.getTasks().stream().filter(t -> !t.getId().equals(id)).collect(Collectors.toList());
+        user.setTasks(new_tasks);
+        userRepository.save(user);
+        taskRepository.deleteTaskById(id);
+        log.info("Task deleted");
     }
 
     @Transactional

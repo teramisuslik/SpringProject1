@@ -84,12 +84,14 @@ public class Controller {
     //чтобы отметить задачу как выполненную
     @PutMapping("/markthetaskascompleted")
     public String markTaskAsCompleted(@RequestParam String title) {
+        log.info("markTaskAsCompleted");
         return taskService.markTaskAsCompleted(title);
     }
 
     //чтобы отметить задачу, что она в работе
     @PutMapping("/markthetaskasinwork")
     public String markTaskAsInWork(@RequestParam String title) {
+        log.info("markTaskAsInWork");
         return taskService.markTaskAsInWork(title);
     }
 
@@ -98,9 +100,17 @@ public class Controller {
     @PreAuthorize("hasRole('ADMIN')")
     public String markTaskAsOnRework(@RequestParam String title,
                                    @RequestBody Comment comment) {
+        log.info("markTaskAsOnRework");
         return taskService.markTaskAsOnRework(title, comment);
     }
 
+    @GetMapping("/allusersname")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<String> getAllUsers() {
+        List<String> list =  userService.findAllUsername();
+        log.info(list.toString());
+        return list;
+    }
 
     @DeleteMapping("/deleteuser/{username}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -111,11 +121,13 @@ public class Controller {
         return ResponseEntity.ok("User deleted");
     }
 
-    @GetMapping("/allusersname")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<String> getAllUsers() {
-        List<String> list =  userService.findAllUsername();
-        log.info(list.toString());
-        return list;
+    @PutMapping("/updatetask")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUser(@RequestBody Task task) {
+        log.info("updateTask");
+        taskService.updateTask(task);
+        log.info("Task updated");
+        return ResponseEntity.ok("Task updated");
     }
+
 }
