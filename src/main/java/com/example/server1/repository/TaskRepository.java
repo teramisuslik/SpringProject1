@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task,Long> {
@@ -17,5 +18,10 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
 
     Optional<Task> findByTitle (String title);
 
+    Optional<Task> findById (Long id);
+
     void deleteTaskById(Long id);
+
+    List<Task> id(Long id);
+
 }

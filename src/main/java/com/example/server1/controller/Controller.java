@@ -83,25 +83,25 @@ public class Controller {
 
     //чтобы отметить задачу как выполненную
     @PutMapping("/markthetaskascompleted")
-    public String markTaskAsCompleted(@RequestParam String title) {
+    public String markTaskAsCompleted(@RequestParam Long taskId) {
         log.info("markTaskAsCompleted");
-        return taskService.markTaskAsCompleted(title);
+        return taskService.markTaskAsCompleted(taskId);
     }
 
     //чтобы отметить задачу, что она в работе
     @PutMapping("/markthetaskasinwork")
-    public String markTaskAsInWork(@RequestParam String title) {
+    public String markTaskAsInWork(@RequestParam Long taskId) {
         log.info("markTaskAsInWork");
-        return taskService.markTaskAsInWork(title);
+        return taskService.markTaskAsInWork(taskId);
     }
 
     //чтобы отправить задачу на доработку и добывать комментарий
     @PutMapping("/markthetaskasonrework")
     @PreAuthorize("hasRole('ADMIN')")
-    public String markTaskAsOnRework(@RequestParam String title,
+    public String markTaskAsOnRework(@RequestParam Long taskId,
                                    @RequestBody Comment comment) {
         log.info("markTaskAsOnRework");
-        return taskService.markTaskAsOnRework(title, comment);
+        return taskService.markTaskAsOnRework(taskId, comment);
     }
 
     @GetMapping("/allusersname")

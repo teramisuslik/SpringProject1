@@ -1,10 +1,12 @@
 package com.example.server1.service;
 
+import com.example.server1.controller.NotificationProduser;
 import com.example.server1.entity.Role;
 import com.example.server1.entity.Status;
 import com.example.server1.entity.Task;
 import com.example.server1.entity.User;
 import com.example.server1.exeptions.NotFoundExeption;
+import com.example.server1.repository.CommentRepositopy;
 import com.example.server1.repository.TaskRepository;
 import com.example.server1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
+    private final NotificationProduser notificationProduser;
+    private final CommentRepositopy commentRepositopy;
 
     public User create(String username, String password) {
         User user = User.builder()
@@ -70,6 +74,7 @@ public class UserService {
             List<Task> tasks = user.getTasks() != null ? user.getTasks() : new ArrayList<>();
             tasks.add(task);
             user.setTasks(tasks);
+            notificationProduser.sendNotificationForUser("появилось новое задание", username);
         }
         else{
             throw new NotFoundExeption("пустой список задач");
@@ -121,11 +126,14 @@ public class UserService {
         log.info("username : " + username);
         User user = userRepository.getUserByUsername(username);
         log.info("username : " + user.getUsername());
+        Task task = user.getTasks().stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
         List<Task> new_tasks = user.getTasks().stream().filter(t -> !t.getId().equals(id)).collect(Collectors.toList());
         user.setTasks(new_tasks);
         userRepository.save(user);
+        commentRepositopy.deleteAllByTask(task);
         taskRepository.deleteTaskById(id);
         log.info("Task deleted");
+        notificationProduser.sendNotificationForUser("задание " + task.getTitle() + " удалено", username);
     }
 
     @Transactional
