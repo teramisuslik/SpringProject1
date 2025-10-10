@@ -120,7 +120,7 @@ public class Controller {
         log.info("User deleted");
         return ResponseEntity.ok("User deleted");
     }
-
+   //комментарий
     @PutMapping("/updatetask")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@RequestBody Task task) {
